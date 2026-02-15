@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="referrer" content="no-referrer">
+  <title>
+    {% if username %}
+      u/{{ username }}
+    {% else %}
+      r/{{ subreddit }}
+    {% endif %}
+  </title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/thread.css') }}">
+</head>
+<body>
+
+{% include 'navbar.html' %}
+
+<main class="main-content">
+  <div class="container">
+<article>
+  <div class="meta">
+    <a href="/r/{{ post.subreddit }}">
+      {% if post.subreddit_icon %}
+        <img src="{{ post.subreddit_icon }}" class="meta-icon" alt="">
+      {% endif %}
+      {{ post.subreddit_full }}
+    </a> •
+    <a href="/u/{{ post.author }}">
+      u/{{ post.author }}
+    </a>
+    <span class="meta-sep">•</span>
+    <span class="timestamp">{{ post.created_rel }}</span>
+    {% if post.nsfw %} • <span class="nsfw">NSFW</span>{% endif %}
+    {% if post.flair %} • <span class="flair">{{ post.flair }}</span>{% endif %}
+    {% if post.spoiler %} • <span class="spoiler">Spoiler</span>{% endif %}
+    {% if post.locked %} • <span class="locked">Locked</span>{% endif %}
+    {% if post.stickied %} • <span class="stickied">Stickied</span>{% endif %}
+    {% if post.archived %} • <span class="archived">Archived</span>{% endif %}
+  </div>
+
+  <div class="post-content">
+    <h4 class="post-title">
+      <a href="{{ post.permalink }}">
+        {{ post.title }}
+      </a>
+    </h4>
+
+  {% if post.selftext_html %}
+    <div class="brief">{{ post.selftext_html | safe }}</div>
+  {% endif %}
+
+  {% if post.image %}
+    <div class="embed-image">
+      <a href="/img?url={{ post.image }}">
+        <img src="/img?url={{ post.image }}" alt="Post image">
+      </a>
+    </div>
+  {% endif %}
+
+  {% if post.video_mp4 or post.video_hls %}
+    <div class="embed-video">
+      <video
+        class="video-player"
+        controls
+        playsinline
+        preload="metadata"
+        {% if post.video_hls %}
+          data-hls="{{ post.video_hls }}"
+        {% endif %}
+      >
+        {% if post.video_mp4 %}
+          <source src="{{ post.video_mp4 }}" type="video/mp4">
+        {% endif %}
+      </video>
+    </div>
+  {% endif %}
+
+  {% if post.gallery %}
+    <div class="embed-gallery">
+      {% for item in post.gallery %}
+        <img src="{{ item.url }}" alt="Gallery image">
+      {% endfor %}
+    </div>
+  {% endif %}
+  </div>
+
+  <div class="stats">
+    {{ post.score }} points • {{ post.comments_count }} comments
+  </div>
+</article>
+
+  </div>
+</main>
+
+{% if post.comments %}
+  {% macro render_comment(c, depth=0) %}
+    {% if c.type == 'more' %}
+      <div class="thread-comment thread-more" style="--depth: {{ depth }}">
+        <a class="load-more" href="?more={{ c.children | join(',') }}">Load more comments</a>
+      </div>
+    {% else %}
+    <div class="thread-comment" style="--depth: {{ depth }}">
+      <a href="{{ post.permalink }}" class="comment-link">
+        <div class="thread-meta">
+          <span class="score-box" onclick="event.stopPropagation()">{{ c.score }}</span>
+          <span class="meta-sep">•</span>
+          <a href="/u/{{ c.author }}" class="username" onclick="event.stopPropagation()">u/{{ c.author }}</a>
+          {% if c.author == post.author %}
+            <span class="badge-op">OP</span>
+          {% endif %}
+          {% if c.author and c.author.lower().startswith('bot') %}
+            <span class="badge-bot">BOT</span>
+          {% endif %}
+          <span class="meta-sep">•</span>
+          <span class="timestamp">{{ c.created_rel }}</span>
+        </div>
+        <div class="thread-body">{{ c.body_html | safe }}</div>
+      </a>
+      {% if c.children %}
+        {% if depth >= 6 %}
+          <div class="thread-controls">
+            <a class="continue-thread" href="?focus={{ c.fullname }}">Continue thread</a>
+          </div>
+        {% else %}
+          <div class="thread-children">
+            {% for child in c.children %}
+              {{ render_comment(child, depth + 1) }}
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endif %}
+    </div>
+    {% endif %}
+  {% endmacro %}
+
+  <div class="thread-title">Comments</div>
+  <section class="thread">
+    {% for c in post.comments %}
+      {{ render_comment(c, 0) }}
+    {% endfor %}
+  </div>
+</main>
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js"></script>
+<script>
+  (function () {
+    if (!window.Hls) return;
+    document.querySelectorAll('video[data-hls]').forEach(function (video) {
+      var src = video.getAttribute('data-hls');
+      if (!src) return;
+      if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = src;
+        return;
+      }
+      if (Hls.isSupported()) {
+        var hls = new Hls();
+        hls.loadSource(src);
+        hls.attachMedia(video);
+      }
+    });
+  })();
+</script>
+
+</body>
+</html>

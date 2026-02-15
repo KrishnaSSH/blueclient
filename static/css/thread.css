@@ -1,0 +1,187 @@
+:root {
+  --thread-line: #ddd;
+  --thread-indent: 24px;
+  --text-color: #333;
+  --meta-color: #666;
+  --badge-op-bg: #e0e0e0;
+  --badge-bot-bg: #228b22;
+  --score-bg: #f0f0f0;
+  --comment-radius: 4px;
+}
+
+/* Thread container */
+.post-content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.thread {
+  margin: 1rem auto;
+  max-width: 900px; /* increased width */
+}
+
+/* Thread title */
+.thread-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 1rem 0 0.75rem 0;
+  text-align: center;
+  color: #111;
+  padding-left: 0;           /* ensure no padding pushes it */
+}
+
+/* Individual comment */
+.thread-comment {
+  position: relative;
+  padding: 0.6rem 1rem 0.6rem 0.6rem;
+  margin-bottom: 0.3rem;
+  border-left: 2px solid var(--thread-line);
+  margin-left: calc(var(--depth, 0) * var(--thread-indent));
+  border-radius: var(--comment-radius) 0 0 var(--comment-radius);
+  background: #fff;
+
+  /* NEW: limit width of nested comments */
+  max-width: calc(100% - calc(var(--depth, 0) * var(--thread-indent)));
+  box-sizing: border-box;
+}
+
+/* Horizontal connector line */
+.thread-comment::before {
+  content: "";
+  position: absolute;
+  top: 1rem;
+  left: -2px;
+  width: 8px;
+  height: 2px;
+  background: var(--thread-line);
+}
+
+/* Comment meta info */
+.thread-meta {
+  font-size: 0.85rem;
+  color: var(--meta-color);
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.thread-meta a {
+  color: inherit;
+  text-decoration: none;
+  font-weight: bold; /* distinguish links */
+  transition: color 0.2s;
+}
+
+/* Hover only for usernames */
+.username:hover {
+  text-decoration: underline;
+}
+
+/* Meta separator */
+.meta-sep {
+  color: #999;
+}
+
+/* Score box */
+.score-box {
+  display: inline-block;
+  padding: 0.1rem 0.4rem;
+  border-radius: 2px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: var(--text-color);
+  background: var(--score-bg);
+  min-width: 2.5rem;
+  text-align: center;
+}
+
+/* Usernames and badges */
+.username {
+  text-decoration: underline;
+}
+
+.badge-op {
+  display: inline-block;
+  padding: 0.1rem 0.35rem;
+  border-radius: 2px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  background: var(--badge-op-bg);
+}
+
+.badge-bot {
+  display: inline-block;
+  padding: 0.1rem 0.35rem;
+  border-radius: 2px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: #fff;
+  background: var(--badge-bot-bg);
+}
+
+/* Thread body text */
+.thread-body {
+  line-height: 1.7;
+  font-size: 1rem;
+  color: var(--text-color);
+  padding: 0 1rem;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.thread-body p {
+  margin: 0.4rem 0;
+}
+
+.thread-body a {
+  color: #0077cc;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+/* Images inside comments */
+.thread-body img {
+  max-width: 70%;
+  height: auto;
+  border-radius: 4px;
+  display: block;
+  margin: 0.5rem auto;
+}
+
+/* Children comments */
+.thread-children {
+  margin-top: 0.3rem;
+}
+
+/* Controls under comments */
+.thread-controls {
+  margin-top: 0.3rem;
+}
+
+/* Dashed line for collapsed comments */
+.thread-more {
+  border-left: 2px dashed #ccc;
+}
+
+/* Load more / continue thread links */
+.load-more,
+.continue-thread {
+  display: inline-block;
+  padding: 0.3rem 0.6rem;
+  border-radius: 3px;
+  background: var(--score-bg);
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: bold;
+  transition: background 0s, color 0s;
+}
+
+/* Hover effect for load more links */
+.load-more:hover,
+.continue-thread:hover {
+  background: #e0e0e0;
+  color: var(--hover-color);
+}

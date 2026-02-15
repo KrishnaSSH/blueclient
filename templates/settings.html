@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="referrer" content="no-referrer">
+  <title>Settings</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+
+{% include 'navbar.html' %}
+
+<main class="main-content">
+  <div class="container">
+    <div class="settings-page">
+      
+      <form method="POST" class="settings-form">
+        <div class="setting-item">
+          <label class="setting-label">
+            <input type="checkbox" name="disable_nsfw" {% if disable_nsfw %}checked{% endif %}>
+            <span>Hide NSFW posts</span>
+          </label>
+          <p class="setting-description">
+            When enabled, posts marked as NSFW (Not Safe For Work) will be hidden from your feed.
+          </p>
+        </div>
+        
+        <button type="submit" class="save-button">Save Settings</button>
+      </form>
+    </div>
+  </div>
+</main>
+
+<style>
+  .settings-page {
+    padding: 2rem 0;
+  }
+  .settings-page h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 2rem 0;
+    color: #111;
+  }
+  .settings-form {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+  .setting-item {
+    margin-bottom: 2rem;
+  }
+  .setting-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+  }
+  .setting-label input[type="checkbox"] {
+    width: 1.2rem;
+    height: 1.2rem;
+    cursor: pointer;
+  }
+  .setting-description {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.5;
+  }
+  .save-button {
+    padding: 0.75rem 1.5rem;
+    background-color: #111;
+    color: #fff;
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  .save-button:hover {
+    background-color: #333;
+  }
+</style>
+
+</body>
+</html>

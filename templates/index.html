@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="referrer" content="no-referrer">
+  <title>
+    {% if username %}
+      u/{{ username }}
+    {% else %}
+      r/{{ subreddit }}
+    {% endif %}
+  </title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+
+{% include 'navbar.html' %}
+
+<main class="main-content">
+  <div class="container">
+    {% for post in posts %}
+    <article>
+  <div class="meta">
+    <a href="/r/{{ post.subreddit }}">
+      {% if post.subreddit_icon %}
+        <img src="{{ post.subreddit_icon }}" class="meta-icon" alt="">
+      {% endif %}
+      {{ post.subreddit_full }}
+    </a> •
+    <a href="/u/{{ post.author }}">
+      u/{{ post.author }}
+    </a>
+    <span class="meta-sep">•</span>
+    <span class="timestamp">{{ post.created_rel }}</span>
+    {% if post.nsfw %} • <span class="nsfw">NSFW</span>{% endif %}
+    {% if post.flair %} • <span class="flair">{{ post.flair }}</span>{% endif %}
+    {% if post.spoiler %} • <span class="spoiler">Spoiler</span>{% endif %}
+    {% if post.locked %} • <span class="locked">Locked</span>{% endif %}
+    {% if post.stickied %} • <span class="stickied">Stickied</span>{% endif %}
+    {% if post.archived %} • <span class="archived">Archived</span>{% endif %}
+  </div>
+
+<h4>
+  <a href="{{ url_for('main.post_page', subreddit=post.subreddit, post_id=post.id, slug='') }}">
+    {{ post.title }}
+  </a>
+</h4>
+
+
+{% if post.brief_html %}
+  <div class="brief">{{ post.brief_html | safe }}</div>
+{% endif %}
+
+  {% if post.image %}
+    <div class="embed-image">
+      <a href="/img?url={{ post.image }}">
+        <img src="/img?url={{ post.image }}" alt="Post image">
+      </a>
+    </div>
+  {% endif %}
+
+  {% if post.video_mp4 or post.video_hls %}
+    <div class="embed-video">
+      <video
+        class="video-player"
+        controls
+        playsinline
+        preload="metadata"
+        {% if post.video_mp4 %}src="{{ post.video_mp4 }}"{% endif %}
+        {% if post.video_hls %}data-hls="{{ post.video_hls }}"{% endif %}
+      ></video>
+    </div>
+  {% endif %}
+
+
+  <div class="stats">
+    {{ post.score }} points • {{ post.comments_count }} comments
+  </div>
+</article>
+{% endfor %}
+
+  </div>
+</main>
+
+<nav class="pagination">
+    {% if before %}
+        {% if username %}
+            <a href="/u/{{ username }}?after={{ before }}">← Back</a>
+        {% else %}
+            <a href="/r/{{ subreddit }}?after={{ before }}">← Back</a>
+        {% endif %}
+    {% endif %}
+    {% if after %}
+        {% if username %}
+            <a href="/u/{{ username }}?after={{ after }}">Next →</a>
+        {% else %}
+            <a href="/r/{{ subreddit }}?after={{ after }}">Next →</a>
+        {% endif %}
+    {% endif %}
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js"></script>
+<script>
+  (function () {
+    if (!window.Hls) return;
+    document.querySelectorAll('video[data-hls]').forEach(function (video) {
+      var src = video.getAttribute('data-hls');
+      if (!src) return;
+      if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = src;
+        return;
+      }
+      if (Hls.isSupported()) {
+        var hls = new Hls();
+        hls.loadSource(src);
+        hls.attachMedia(video);
+      }
+    });
+  })();
+</script>
+
+</body>
+</html>

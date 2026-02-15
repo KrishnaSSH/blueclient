@@ -1,0 +1,15 @@
+<header class="site-header">
+  <div class="header-content">
+    <h1 class="site-title">
+      <a href="/">
+        client
+      </a>
+    </h1>
+    <div class="header-actions">
+      {% if subreddit %}
+      <a href="/r/{{ subreddit }}" class="subreddit-link">r/{{ subreddit }}</a>
+      {% endif %}
+      <a href="/settings" class="settings-link">Settings</a>
+    </div>
+  </div>
+</header>
